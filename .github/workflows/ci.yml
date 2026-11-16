@@ -95,7 +95,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: dtolnay/rust-toolchain@1.85
+      # La versión va en `toolchain` (no en la etiqueta de la acción) para que
+      # Dependabot no la confunda con una versión de la acción.
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: "1.85"
       - uses: Swatinem/rust-cache@v2
       # rust-toolchain.toml fija "stable"; se fuerza 1.85 explícitamente.
       - run: cargo +1.85 check --workspace --all-targets --locked

@@ -11,3 +11,6 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    ignore:
+      # Sus "versiones" son versiones de Rust (stable, 1.85…), no de la acción.
+      - dependency-name: dtolnay/rust-toolchain
