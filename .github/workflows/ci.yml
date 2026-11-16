@@ -88,7 +88,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@1.85
+      - uses: dtolnay/rust-toolchain@1.120
       - uses: Swatinem/rust-cache@v2
       # rust-toolchain.toml fija "stable"; se fuerza 1.85 explícitamente.
       - run: cargo +1.85 check --workspace --all-targets --locked
