@@ -71,6 +71,8 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         with:
           key: ${{ matrix.os }}
+      - name: PDFium fijado (xtask/pdfium.lock)
+        run: cargo xtask pdfium fetch
       - run: cargo build --workspace --all-targets --locked
       - run: cargo test --workspace --locked
 

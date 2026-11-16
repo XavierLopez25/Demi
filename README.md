@@ -28,10 +28,14 @@ Demi se desarrolla con *Spec-Driven Development*. Todo el diseño está en [`spe
 Requisitos: Rust estable (≥ 1.85).
 
 ```sh
+cargo xtask pdfium fetch   # descarga PDFium fijado y verifica su SHA-256
 cargo build
 cargo test
 cargo xtask help
 ```
+
+PDFium se carga dinámicamente desde `vendor/pdfium/<plataforma>/` en desarrollo
+(o desde `DEMI_PDFIUM_DIR`); en las versiones empaquetadas, desde el directorio del ejecutable.
 
 ## Estructura
 
