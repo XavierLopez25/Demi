@@ -2,37 +2,11 @@
 //!
 //! Requiere `cargo xtask pdfium fetch` (o `DEMI_PDFIUM_DIR` apuntando a la biblioteca).
 
-use std::path::PathBuf;
+mod common;
 
+use common::pdfium_dir;
 use demi_engine::pdfium_lib;
 use demi_engine::pdfium_render::prelude::*;
-
-/// Directorio de PDFium: `DEMI_PDFIUM_DIR` o `vendor/pdfium/<plataforma>/{lib,bin}`.
-fn pdfium_dir() -> Option<PathBuf> {
-    if let Some(dir) = std::env::var_os(pdfium_lib::ENV_PDFIUM_DIR) {
-        return Some(PathBuf::from(dir));
-    }
-    let platform = match (std::env::consts::OS, std::env::consts::ARCH) {
-        ("linux", "x86_64") => "linux-x64",
-        ("linux", "aarch64") => "linux-arm64",
-        ("windows", "x86_64") => "win-x64",
-        ("windows", "aarch64") => "win-arm64",
-        ("macos", "aarch64") => "mac-arm64",
-        ("macos", "x86_64") => "mac-x64",
-        _ => return None,
-    };
-    let sub = if platform.starts_with("win") {
-        "bin"
-    } else {
-        "lib"
-    };
-    Some(
-        PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-            .join("../../vendor/pdfium")
-            .join(platform)
-            .join(sub),
-    )
-}
 
 /// PDF mínimo de una página (200×200 pt) con un cuadrado negro de 100×100 pt en el centro.
 fn sample_pdf() -> Vec<u8> {

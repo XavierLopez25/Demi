@@ -73,6 +73,13 @@ jobs:
           key: ${{ matrix.os }}
       - name: PDFium fijado (xtask/pdfium.lock)
         run: cargo xtask pdfium fetch
+      - name: Caché del corpus de pruebas
+        uses: actions/cache@v4
+        with:
+          path: corpus/pdfjs
+          key: corpus-${{ hashFiles('corpus/manifest.toml') }}
+      - name: Corpus de pruebas (corpus/manifest.toml)
+        run: cargo xtask corpus fetch --set smoke
       - run: cargo build --workspace --all-targets --locked
       - run: cargo test --workspace --locked
 

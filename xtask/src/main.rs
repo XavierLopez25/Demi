@@ -4,8 +4,13 @@
 //!   verifica su SHA-256 y lo extrae en `vendor/pdfium/<plataforma>/` (T0.3).
 //! - `pdfium dir [--platform <p>]`: imprime el directorio de la biblioteca.
 //!
-//! Previstas: `corpus fetch` (T0.4), `golden update` (T0.5).
+//! - `corpus fetch [--set <s>]`: descarga (verificada) y genera el corpus de pruebas (T0.4).
+//! - `corpus list`: muestra el manifiesto del corpus.
+//!
+//! Prevista: `golden update` (T0.5).
 
+mod corpus;
+mod pdfgen;
 mod pdfium;
 
 use std::process::ExitCode;
@@ -15,6 +20,8 @@ const HELP: &str = "Uso: cargo xtask <tarea>
 Tareas:
   pdfium fetch [--platform <p>]   Descarga y verifica PDFium fijado
   pdfium dir   [--platform <p>]   Imprime el directorio de la biblioteca
+  corpus fetch [--set <s>]        Descarga y genera el corpus (por defecto: smoke)
+  corpus list                     Muestra el manifiesto del corpus
   help                            Muestra esta ayuda
 
 Plataformas: linux-x64, linux-arm64, win-x64, win-arm64, mac-arm64, mac-x64
@@ -40,6 +47,8 @@ fn main() -> ExitCode {
             println!("{}", dir.display());
             Ok(())
         }),
+        ["corpus", "fetch", rest @ ..] => corpus::set_arg(rest).and_then(|s| corpus::fetch(&s)),
+        ["corpus", "list"] => corpus::list(),
         _ => Err(format!("Tarea desconocida: {}\n\n{HELP}", args.join(" "))),
     };
     match result {

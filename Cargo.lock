@@ -176,6 +176,8 @@ version = "0.0.1"
 dependencies = [
  "demi-core",
  "pdfium-render",
+ "serde",
+ "toml",
 ]
 
 [[package]]

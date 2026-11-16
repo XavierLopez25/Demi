@@ -17,7 +17,7 @@ struct Lock {
 }
 
 /// Raíz del workspace (padre de `xtask/`).
-fn workspace_root() -> PathBuf {
+pub fn workspace_root() -> PathBuf {
     let manifest = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
     manifest.parent().map(Path::to_path_buf).unwrap_or(manifest)
 }
