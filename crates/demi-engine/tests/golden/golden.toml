@@ -1,0 +1,14 @@
+# Regresión visual (T0.5): umbrales de SSIM por documento del corpus.
+# SSIM = 1,0 significa imágenes idénticas. Las diferencias de antialiasing entre
+# plataformas quedan por encima de 0,98 (verificado en Linux, Windows y macOS).
+
+default_threshold = 0.98
+
+[threshold]
+# id = 0.95
+
+[skip]
+# Usa fuentes CJK del sistema (no incrustadas): cada sistema operativo las dibuja
+# distinto (SSIM 0,27 en Linux y 0,82 en macOS frente a la referencia). Su apertura
+# sigue cubierta por el test corpus_smoke.
+perf-text-cjk-nonembedded = "fuentes del sistema, distintas en cada plataforma"

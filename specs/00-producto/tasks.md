@@ -76,7 +76,7 @@ flowchart LR
   - **Hecho cuando:** `xtask corpus fetch --set smoke` descarga unos 50 archivos verificados.
   - Requisitos: R-NFR-CAL-05, §14
 
-- [ ] **T0.5 Arnés de regresión visual** · M · depende de T0.3, T0.4
+- [x] **T0.5 Arnés de regresión visual** · M · depende de T0.3, T0.4
   - Biblioteca de pruebas que renderiza páginas, compara contra referencias con SSIM (umbral configurable por archivo) y guarda las diferencias como artefactos de CI.
   - Comando `xtask golden update` para regenerar las referencias con revisión manual.
   - **Hecho cuando:** CI ejecuta el set `smoke` y falla si se altera una referencia.
