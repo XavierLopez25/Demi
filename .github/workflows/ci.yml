@@ -74,7 +74,7 @@ jobs:
       - name: PDFium fijado (xtask/pdfium.lock)
         run: cargo xtask pdfium fetch
       - name: Caché del corpus de pruebas
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: corpus/pdfjs
           key: corpus-${{ hashFiles('corpus/manifest.toml') }}
