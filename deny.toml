@@ -1,0 +1,43 @@
+# cargo-deny para todo el workspace (incluye los binarios GPL-3.0).
+# Las bibliotecas MIT/Apache se verifican además con deny-lib.toml (sin GPL).
+# Requisitos: R-NFR-CAL-02, R-NFR-SEG-03.
+
+[graph]
+all-features = true
+
+[advisories]
+version = 2
+yanked = "deny"
+
+[licenses]
+version = 2
+confidence-threshold = 0.93
+allow = [
+    "MIT",
+    "Apache-2.0",
+    "Apache-2.0 WITH LLVM-exception",
+    "BSD-2-Clause",
+    "BSD-3-Clause",
+    "ISC",
+    "Zlib",
+    "Unicode-3.0",
+    "MPL-2.0",
+    "CC0-1.0",
+    "OFL-1.1",
+    # Solo para demi-app / demi-cli y para Slint (que se usa bajo su opción GPL-3.0).
+    "GPL-3.0-only",
+    "GPL-3.0-or-later",
+]
+# AGPL, SSPL, licencias comerciales o "freemium": prohibidas al no estar en la lista.
+
+[licenses.private]
+ignore = false
+
+[bans]
+multiple-versions = "warn"
+wildcards = "deny"
+allow-wildcard-paths = true
+
+[sources]
+unknown-registry = "deny"
+unknown-git = "deny"

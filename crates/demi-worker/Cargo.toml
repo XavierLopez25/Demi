@@ -1,0 +1,19 @@
+[package]
+name = "demi-worker"
+description = "Proceso aislado de Demi: el único que abre y procesa documentos PDF."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+
+[dependencies]
+demi-core.workspace = true
+demi-engine.workspace = true
+demi-text.workspace = true
+demi-sign.workspace = true
+demi-ipc.workspace = true
+
+[lints]
+workspace = true

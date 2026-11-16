@@ -1,0 +1,15 @@
+[package]
+name = "demi-ipc"
+description = "Protocolo entre la app de Demi y su proceso aislado demi-worker."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+
+[dependencies]
+demi-core.workspace = true
+
+[lints]
+workspace = true

@@ -1,0 +1,15 @@
+[package]
+name = "demi-text"
+description = "Bloques de texto y edición de texto existente (niveles N0–N3) de Demi."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+
+[dependencies]
+demi-core.workspace = true
+
+[lints]
+workspace = true
