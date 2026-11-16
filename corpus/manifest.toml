@@ -1,0 +1,397 @@
+# Corpus de PDFs de prueba de Demi (T0.4). Requisitos: R-NFR-CAL-05, requirements.md §14.
+#
+# Los PDFs NO se versionan. `cargo xtask corpus fetch [--set smoke|full]` los descarga
+# verificando SHA-256 y genera los sintéticos. `cargo xtask corpus list` los muestra.
+#
+# expect: resultado esperado al abrir el documento con el motor
+#   ok        abre y renderiza la primera página
+#   password  requiere contraseña
+#   error     falla de forma controlada (sin cierre inesperado)
+
+[sources.pdfjs]
+url_template = "https://raw.githubusercontent.com/mozilla/pdf.js/{commit}/test/pdfs/{path}"
+commit = "bb1539a2c9b5b76d070284cca9091717133d8bf1"
+license = "Apache-2.0 (suite de pruebas de mozilla/pdf.js; procedencia de cada archivo en ese repositorio)"
+
+[[file]]
+id = "annotation-highlight"
+source = "pdfjs"
+path = "annotation-highlight.pdf"
+sha256 = "72b6387356ccfdfb95a0a5eff5e1ceb9b7667019807d7b04abaf64dad7ea143a"
+sets = ["smoke", "full"]
+tags = ["anotaciones", "resaltado"]
+expect = "ok"
+
+[[file]]
+id = "annotation-freetext"
+source = "pdfjs"
+path = "annotation-freetext.pdf"
+sha256 = "318ed4bead93fa6ff023571b17ddca41e82fe2347b497ea24903a11e1892fb71"
+sets = ["smoke", "full"]
+tags = ["anotaciones", "texto-libre"]
+expect = "ok"
+
+[[file]]
+id = "annotation-caret-ink"
+source = "pdfjs"
+path = "annotation-caret-ink.pdf"
+sha256 = "afdc6fb72e8dcb8f0796a48388fc011e9db212e18d1d7b8cf95b327e88cf6ce9"
+sets = ["smoke", "full"]
+tags = ["anotaciones", "tinta", "caret"]
+expect = "ok"
+
+[[file]]
+id = "annotation-fileattachment"
+source = "pdfjs"
+path = "annotation-fileattachment.pdf"
+sha256 = "b2f3751cd63e2402d95673f763e52fb105e6ce8e0b41406ca6d9965f5c894d43"
+sets = ["smoke", "full"]
+tags = ["anotaciones", "adjuntos"]
+expect = "ok"
+
+[[file]]
+id = "annotation-border-styles"
+source = "pdfjs"
+path = "annotation-border-styles.pdf"
+sha256 = "ba3a3c67030f9be2ad2c1989b78ec302501f71cecb4e5ebf193f6ce9ca51ff56"
+sets = ["smoke", "full"]
+tags = ["anotaciones", "bordes"]
+expect = "ok"
+
+[[file]]
+id = "highlight-popup"
+source = "pdfjs"
+path = "highlight_popup.pdf"
+sha256 = "c7bcbbc375995dbb04277596cb87233a614a97de8dcbb63d4ae7660df4cc3d8b"
+sets = ["smoke", "full"]
+tags = ["anotaciones", "popup"]
+expect = "ok"
+
+[[file]]
+id = "file-pdfjs-form"
+source = "pdfjs"
+path = "file_pdfjs_form.pdf"
+sha256 = "808af1e794952475e8af824ad1ee6ac41d6646de122e5ac91975e75b0951c80b"
+sets = ["smoke", "full"]
+tags = ["formularios", "acroform"]
+expect = "ok"
+
+[[file]]
+id = "form-two-pages"
+source = "pdfjs"
+path = "form_two_pages.pdf"
+sha256 = "6d7c608d0102fa1e1b3cbc2c3b0a989783e90f84ff1a7fe7cbdb6dc2a1b60fbd"
+sets = ["smoke", "full"]
+tags = ["formularios", "acroform", "multipagina"]
+expect = "ok"
+
+[[file]]
+id = "annotation-button-widget"
+source = "pdfjs"
+path = "annotation-button-widget.pdf"
+sha256 = "f7b1c9c7b2ecb909f6b168cc1b137230076533f977a205472b212b7f0d3a78d7"
+sets = ["smoke", "full"]
+tags = ["formularios", "casillas", "botones-opcion"]
+expect = "ok"
+
+[[file]]
+id = "annotation-choice-widget"
+source = "pdfjs"
+path = "annotation-choice-widget.pdf"
+sha256 = "2fcab2aed82afe9775359c1d166fb7aae77e99d25fe03be177e233d02d572538"
+sets = ["smoke", "full"]
+tags = ["formularios", "listas", "combos"]
+expect = "ok"
+
+[[file]]
+id = "acroform-calculation-order"
+source = "pdfjs"
+path = "acroform_calculation_order.pdf"
+sha256 = "9081aad78cb6bb1871eb5c51addbe75ce73e4617a3e1fa15aa3da21232b6b755"
+sets = ["smoke", "full"]
+tags = ["formularios", "calculo", "javascript"]
+expect = "ok"
+
+[[file]]
+id = "checkbox-bad-appearance"
+source = "pdfjs"
+path = "checkbox-bad-appearance.pdf"
+sha256 = "0cd13bf7375a2b6b9b01bb694aefcfe9dac225105cb9ad7e03798783b3318ad9"
+sets = ["smoke", "full"]
+tags = ["formularios", "apariencia-rota"]
+expect = "ok"
+
+[[file]]
+id = "xfa-issue14315"
+source = "pdfjs"
+path = "xfa_issue14315.pdf"
+sha256 = "d039a40ea28384bae8d1a24929a4288aae1aeb433c441fd39c04fad618fa6f19"
+sets = ["smoke", "full"]
+tags = ["formularios", "xfa"]
+expect = "ok"
+
+[[file]]
+id = "signed-verified"
+source = "pdfjs"
+path = "signed_verified.pdf"
+sha256 = "1fe9051d9ac1f39828988040db471916251dc2953c1a32efd6596e4975da848c"
+sets = ["smoke", "full"]
+tags = ["firmas", "firma-digital"]
+expect = "ok"
+
+[[file]]
+id = "empty-protected"
+source = "pdfjs"
+path = "empty_protected.pdf"
+sha256 = "69556af04215faec7da3e93e823c64f1b74679e52fd10379176f0e0462dd4b6c"
+sets = ["smoke", "full"]
+tags = ["cifrado", "permisos"]
+expect = "ok"
+
+[[file]]
+id = "encrypted-attachment"
+source = "pdfjs"
+path = "encrypted-attachment.pdf"
+sha256 = "0f44da5152adf8cafcd7b0057d840310d78e17d033ee5414da0881b6dcd130ab"
+sets = ["smoke", "full"]
+tags = ["cifrado", "adjuntos"]
+expect = "ok"
+
+[[file]]
+id = "arabiccidtruetype"
+source = "pdfjs"
+path = "ArabicCIDTrueType.pdf"
+sha256 = "1cad1de912ba29f89a6d8b08bc5b0f84382874ffedab2c8f9e05ef608c265bb1"
+sets = ["smoke", "full"]
+tags = ["texto", "rtl", "arabe", "cid"]
+expect = "ok"
+
+[[file]]
+id = "vertical"
+source = "pdfjs"
+path = "vertical.pdf"
+sha256 = "514511143db12309893fb69cdf98c76f2361c20da394f79fdff2c119ed7a4393"
+sets = ["smoke", "full"]
+tags = ["texto", "vertical", "cjk"]
+expect = "ok"
+
+[[file]]
+id = "simpletype3font"
+source = "pdfjs"
+path = "simpletype3font.pdf"
+sha256 = "a5697cbc51c19816944658b91e3a41f86e98ae63fbd1007798994b073385aef1"
+sets = ["smoke", "full"]
+tags = ["texto", "type3"]
+expect = "ok"
+
+[[file]]
+id = "type3wordspacing"
+source = "pdfjs"
+path = "Type3WordSpacing.pdf"
+sha256 = "8ac40dc49d40af8b5a50b442ced56b8db962c961a779a0284cd3a6207adc0bb7"
+sets = ["smoke", "full"]
+tags = ["texto", "type3", "espaciado"]
+expect = "ok"
+
+[[file]]
+id = "cid-cff"
+source = "pdfjs"
+path = "cid_cff.pdf"
+sha256 = "d894d356411217414fd9040d3d038612e1f4a1598936b2385a76458dd6d64d38"
+sets = ["smoke", "full"]
+tags = ["texto", "cid", "cff"]
+expect = "ok"
+
+[[file]]
+id = "mixedfonts"
+source = "pdfjs"
+path = "mixedfonts.pdf"
+sha256 = "04f17b84112d8130d75601f8f9c2027481a19df595aacb753ca3f9f3b08b2350"
+sets = ["smoke", "full"]
+tags = ["texto", "fuentes-mixtas"]
+expect = "ok"
+
+[[file]]
+id = "perf-text-cjk-nonembedded"
+source = "pdfjs"
+path = "perf_text_cjk_nonembedded.pdf"
+sha256 = "347456be3aceb9131bceaec25ef8eef9565c32335bdc1f50f22d53b9aeaa2775"
+sets = ["smoke", "full"]
+tags = ["texto", "cjk", "fuente-no-incrustada"]
+expect = "ok"
+
+[[file]]
+id = "complex-ttf-font"
+source = "pdfjs"
+path = "complex_ttf_font.pdf"
+sha256 = "4b205d3fd11e7ad2b9b86cc446561909d48dd9e0b38327cfd69d0fdeb6c28e14"
+sets = ["smoke", "full"]
+tags = ["texto", "truetype"]
+expect = "ok"
+
+[[file]]
+id = "embedded-font"
+source = "pdfjs"
+path = "Embedded_font.pdf"
+sha256 = "4b7588e070cd37c7cfa2ce0a493ba9ec6d57fb36a2ca3c6ab50c74a7818a2f9a"
+sets = ["smoke", "full"]
+tags = ["texto", "fuente-incrustada", "edicion-texto"]
+expect = "ok"
+
+[[file]]
+id = "images"
+source = "pdfjs"
+path = "images.pdf"
+sha256 = "f7a44ca650d951cfea007440cda297dabbf2cf0c8f77a948a580cc0e99496725"
+sets = ["smoke", "full"]
+tags = ["imagenes"]
+expect = "ok"
+
+[[file]]
+id = "bug-jpx"
+source = "pdfjs"
+path = "bug_jpx.pdf"
+sha256 = "4010d808557a72278368c05518367735ed186cbdd04974b8506275f9ac40f999"
+sets = ["smoke", "full"]
+tags = ["imagenes", "jpx"]
+expect = "ok"
+
+[[file]]
+id = "jbig2-symbol-offset"
+source = "pdfjs"
+path = "jbig2_symbol_offset.pdf"
+sha256 = "305b71c67829ef0bb8bddab9fa3ee763dcecd173f5fd996740d17212888fa97d"
+sets = ["smoke", "full"]
+tags = ["imagenes", "jbig2"]
+expect = "ok"
+
+[[file]]
+id = "ccitt-endofblock-false"
+source = "pdfjs"
+path = "ccitt_EndOfBlock_false.pdf"
+sha256 = "f2289b94e7e3f05f9e37754c399d3f525edf9444fb32c3279959cf64b575fe62"
+sets = ["smoke", "full"]
+tags = ["imagenes", "ccitt", "escaneo"]
+expect = "ok"
+
+[[file]]
+id = "perf-images-cmyk"
+source = "pdfjs"
+path = "perf_images_cmyk.pdf"
+sha256 = "d5bb1a090bdc7dc81199f784c0f1cc091053b9811caa1f26b54c2cdb3116f11a"
+sets = ["smoke", "full"]
+tags = ["imagenes", "cmyk", "grande"]
+expect = "ok"
+
+[[file]]
+id = "tagged-stamp"
+source = "pdfjs"
+path = "tagged_stamp.pdf"
+sha256 = "0ce2c20e36b70558eea45511a2c307ce7e22ad0d51be1216b27f7085c0311198"
+sets = ["smoke", "full"]
+tags = ["estructura", "tagged", "sellos"]
+expect = "ok"
+
+[[file]]
+id = "bad-pagelabels"
+source = "pdfjs"
+path = "bad-PageLabels.pdf"
+sha256 = "eff0ee7d1cf2e1a7ccfb25a8fc4c2bbea0ec23c838b61a199a57dbb732ddeaad"
+sets = ["smoke", "full"]
+tags = ["estructura", "etiquetas-pagina", "danado"]
+expect = "ok"
+
+[[file]]
+id = "helloworld-bad"
+source = "pdfjs"
+path = "helloworld-bad.pdf"
+sha256 = "c3e22ea5d7e6f5b7218d76abce4284728889df516a93c1b74a82c4fd69aa1639"
+sets = ["smoke", "full"]
+tags = ["danado"]
+expect = "ok"
+
+[[file]]
+id = "xref-command-missing"
+source = "pdfjs"
+path = "xref_command_missing.pdf"
+sha256 = "88d3905774607b3f529e369db122b2d14051417993c9a704472c91c6702ccff6"
+sets = ["smoke", "full"]
+tags = ["danado", "xref"]
+expect = "ok"
+
+[[file]]
+id = "empty"
+source = "pdfjs"
+path = "empty.pdf"
+sha256 = "fcee6184c0d776126782cd2799797b106373278c8ea0a4354ee4e33cd8663d51"
+sets = ["smoke", "full"]
+tags = ["vacio"]
+expect = "ok"
+
+# --- Sintéticos (generados por xtask/src/pdfgen.rs, dominio público / CC0) ---
+
+[[generated]]
+id = "vacio-0-bytes"
+kind = "zero-bytes"
+file = "vacio-0-bytes.pdf"
+sets = ["smoke", "full"]
+tags = ["danado", "vacio"]
+expect = "error"
+
+[[generated]]
+id = "basura-antes-de-pdf"
+kind = "garbage-prefix"
+file = "basura-antes-de-pdf.pdf"
+sets = ["smoke", "full"]
+tags = ["danado", "reparable"]
+expect = "ok"
+
+[[generated]]
+id = "truncado"
+kind = "truncated"
+file = "truncado.pdf"
+sets = ["smoke", "full"]
+tags = ["danado", "truncado"]
+# PDFium no recupera un archivo cortado a la mitad. T2.2 intentará recuperar páginas
+# completas (R-VIS-06); si lo logra, este valor pasará a "ok".
+expect = "error"
+
+[[generated]]
+id = "xref-roto"
+kind = "broken-xref"
+file = "xref-roto.pdf"
+sets = ["smoke", "full"]
+tags = ["danado", "xref", "reparable"]
+expect = "ok"
+
+[[generated]]
+id = "mil-paginas"
+kind = "pages-1000"
+file = "mil-paginas.pdf"
+sets = ["smoke", "full"]
+tags = ["grande", "rendimiento"]
+expect = "ok"
+
+[[generated]]
+id = "pagina-a0"
+kind = "page-a0"
+file = "pagina-a0.pdf"
+sets = ["smoke", "full"]
+tags = ["pagina-gigante"]
+expect = "ok"
+
+[[generated]]
+id = "cien-mil-operadores"
+kind = "ops-100k"
+file = "cien-mil-operadores.pdf"
+sets = ["smoke", "full"]
+tags = ["rendimiento", "vectores"]
+expect = "ok"
+
+[[generated]]
+id = "nombre-no-ascii"
+kind = "simple"
+file = "documento-ñandú-🙂.pdf"
+sets = ["smoke", "full"]
+tags = ["rutas", "unicode"]
+expect = "ok"

@@ -52,25 +52,25 @@ flowchart LR
 
 ## F0 · Fundaciones
 
-- [ ] **T0.1 Repositorio y workspace** · S
+- [x] **T0.1 Repositorio y workspace** · S
   - Crear el repo `demi` (GitHub) con licencias: `LICENSE-GPL` en la raíz, y `LICENSE-MIT` + `LICENSE-APACHE` en los crates de biblioteca. Añadir el campo `license` correcto en cada `Cargo.toml`.
   - Crear el workspace con los 9 crates vacíos de `design.md` §2.1 y los directorios `ui/`, `i18n/`, `assets/`, `xtask/`, `specs/`, más `CONTRIBUTING.md` y `SECURITY.md`.
   - **Hecho cuando:** `cargo build` pasa y `cargo deny check licenses` rechaza una dependencia AGPL de prueba.
   - Requisitos: R-NFR-CAL-01, R-NFR-CAL-02, R-NFR-CAL-03
 
-- [ ] **T0.2 CI multiplataforma** · M · depende de T0.1
+- [x] **T0.2 CI multiplataforma** · M · depende de T0.1
   - Configurar GitHub Actions con una matriz Windows x64, macOS arm64, macOS x64 y Ubuntu x64: fmt, clippy, deny, test y caché de Cargo.
   - Añadir un workflow nocturno vacío (para fuzzing y corpus) y Dependabot o Renovate.
   - **Hecho cuando:** un PR de ejemplo muestra las cuatro plataformas en verde.
   - Requisitos: R-NFR-CAL-04, R-NFR-SEG-03
 
-- [ ] **T0.3 PDFium fijado (`xtask pdfium`)** · M · depende de T0.1
+- [x] **T0.3 PDFium fijado (`xtask pdfium`)** · M · depende de T0.1
   - `xtask pdfium fetch` descarga la versión fijada de `bblanchon/pdfium-binaries` para el target actual y verifica su SHA-256. Las versiones y checksums viven en `xtask/pdfium.lock`.
   - Documentar cómo enlazarla dinámicamente para desarrollo y cómo empaquetarla.
   - **Hecho cuando:** CI descarga y verifica PDFium en las tres plataformas, y un test renderiza la página 1 de un PDF de ejemplo.
   - Requisitos: R-NFR-SEG-03, ADR-03
 
-- [ ] **T0.4 Corpus de pruebas (`xtask corpus`)** · M · depende de T0.1
+- [x] **T0.4 Corpus de pruebas (`xtask corpus`)** · M · depende de T0.1
   - Manifiesto `corpus/manifest.toml` con la URL, el hash, la licencia y las etiquetas de cada archivo (formulario, firmado, escaneo, dañado, grande, RTL…).
   - Subconjuntos de pdf.js, PDFBox y hayro con licencia compatible, más un set propio con los 13 casos borde de `requirements.md` §14 (generados o donados).
   - **Hecho cuando:** `xtask corpus fetch --set smoke` descarga unos 50 archivos verificados.

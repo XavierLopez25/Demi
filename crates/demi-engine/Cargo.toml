@@ -10,6 +10,11 @@ authors.workspace = true
 
 [dependencies]
 demi-core.workspace = true
+pdfium-render = { version = "0.9.5", default-features = false, features = ["pdfium_8125", "thread_safe"] }
 
 [lints]
 workspace = true
+
+[dev-dependencies]
+serde = { version = "1.0", features = ["derive"] }
+toml = "1.2"

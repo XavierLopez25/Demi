@@ -1,0 +1,94 @@
+# CI de Demi (T0.2). Requisitos: R-NFR-CAL-04, R-NFR-SEG-03.
+# En repositorios públicos, los runners estándar de GitHub (Linux, Windows, macOS) son gratuitos.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+  CARGO_INCREMENTAL: "0"
+  RUSTFLAGS: "-D warnings"
+
+jobs:
+  lint:
+    name: Formato y clippy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo fmt --all --check
+      - run: cargo clippy --workspace --all-targets --locked -- -D warnings
+
+  licencias:
+    name: Licencias, avisos de seguridad y orígenes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: EmbarkStudios/cargo-deny-action@v2
+        with:
+          command: check advisories bans licenses sources
+      - name: Bibliotecas sin GPL (deny-lib.toml)
+        uses: EmbarkStudios/cargo-deny-action@v2
+        with:
+          command: check licenses
+          manifest-path: crates/demi-worker/Cargo.toml
+          arguments: --config deny-lib.toml
+      - name: demi-store sin GPL
+        uses: EmbarkStudios/cargo-deny-action@v2
+        with:
+          command: check licenses
+          manifest-path: crates/demi-store/Cargo.toml
+          arguments: --config deny-lib.toml
+
+  test:
+    name: Tests (${{ matrix.name }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { name: Linux x64, os: ubuntu-latest }
+          - { name: Windows x64, os: windows-latest }
+          - { name: macOS arm64, os: macos-latest }
+          - { name: macOS Intel, os: macos-15-intel }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: ${{ matrix.os }}
+      - name: PDFium fijado (xtask/pdfium.lock)
+        run: cargo xtask pdfium fetch
+      - name: Caché del corpus de pruebas
+        uses: actions/cache@v4
+        with:
+          path: corpus/pdfjs
+          key: corpus-${{ hashFiles('corpus/manifest.toml') }}
+      - name: Corpus de pruebas (corpus/manifest.toml)
+        run: cargo xtask corpus fetch --set smoke
+      - run: cargo build --workspace --all-targets --locked
+      - run: cargo test --workspace --locked
+
+  msrv:
+    name: MSRV (Rust 1.85)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.85
+      - uses: Swatinem/rust-cache@v2
+      # rust-toolchain.toml fija "stable"; se fuerza 1.85 explícitamente.
+      - run: cargo +1.85 check --workspace --all-targets --locked
