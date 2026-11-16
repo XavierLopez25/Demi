@@ -1,0 +1,19 @@
+[package]
+name = "demi-cli"
+description = "Línea de comandos de Demi sobre el catálogo de acciones."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license = "GPL-3.0-only"
+repository.workspace = true
+authors.workspace = true
+
+[[bin]]
+name = "demi-cli"
+path = "src/main.rs"
+
+[dependencies]
+demi-core.workspace = true
+
+[lints]
+workspace = true

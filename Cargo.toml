@@ -1,0 +1,47 @@
+[workspace]
+resolver = "3"
+members = [
+    "crates/demi-core",
+    "crates/demi-engine",
+    "crates/demi-text",
+    "crates/demi-sign",
+    "crates/demi-ipc",
+    "crates/demi-store",
+    "crates/demi-worker",
+    "crates/demi-app",
+    "crates/demi-cli",
+    "xtask",
+]
+
+[workspace.package]
+version = "0.0.1"
+edition = "2024"
+rust-version = "1.85"
+# Licencia por defecto de las bibliotecas. demi-app y demi-cli la sobrescriben con GPL-3.0-only.
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/XavierLopez25/Demi"
+authors = ["Los contribuidores de Demi"]
+
+[workspace.dependencies]
+demi-core = { path = "crates/demi-core", version = "0.0.1" }
+demi-engine = { path = "crates/demi-engine", version = "0.0.1" }
+demi-text = { path = "crates/demi-text", version = "0.0.1" }
+demi-sign = { path = "crates/demi-sign", version = "0.0.1" }
+demi-ipc = { path = "crates/demi-ipc", version = "0.0.1" }
+demi-store = { path = "crates/demi-store", version = "0.0.1" }
+
+[workspace.lints.rust]
+unsafe_op_in_unsafe_fn = "deny"
+missing_docs = "warn"
+
+[workspace.lints.clippy]
+unwrap_used = "deny"
+expect_used = "deny"
+panic = "deny"
+dbg_macro = "deny"
+todo = "warn"
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
+strip = "symbols"
