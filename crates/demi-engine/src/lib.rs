@@ -3,3 +3,7 @@
 //! Ver `specs/00-producto/design.md` §4. Este crate solo se usa dentro de
 //! `demi-worker`, nunca en el proceso de la interfaz (ADR-05).
 #![deny(unsafe_code)]
+
+pub mod pdfium_lib;
+
+pub use pdfium_render;
