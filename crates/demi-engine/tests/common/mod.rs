@@ -1,4 +1,7 @@
 //! Utilidades compartidas por los tests de integración de `demi-engine`.
+#![allow(dead_code)]
+
+pub mod golden;
 
 use std::path::PathBuf;
 

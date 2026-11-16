@@ -82,6 +82,13 @@ jobs:
         run: cargo xtask corpus fetch --set smoke
       - run: cargo build --workspace --all-targets --locked
       - run: cargo test --workspace --locked
+      - name: Imágenes de la regresión visual (si falló)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: golden-diff-${{ matrix.os }}
+          path: target/golden-diff/
+          if-no-files-found: ignore
 
   msrv:
     name: MSRV (Rust 1.85)

@@ -1,0 +1,12 @@
+# Regresión visual (T0.5): umbrales de SSIM por documento del corpus.
+# SSIM = 1,0 significa imágenes idénticas. Las diferencias de antialiasing entre
+# plataformas suelen quedar por encima de 0,98.
+
+default_threshold = 0.98
+
+[threshold]
+# Usa fuentes CJK del sistema (no incrustadas): el resultado depende del sistema operativo.
+perf-text-cjk-nonembedded = 0.85
+
+[skip]
+# id = "motivo"
