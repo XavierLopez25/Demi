@@ -16,12 +16,14 @@ pub struct Gray {
 }
 
 impl Gray {
-    /// Convierte un búfer BGRA/BGRx de PDFium (4 bytes por píxel) a grises (luma BT.601).
-    pub fn from_bgra(raw: &[u8], width: u32, height: u32) -> Self {
+    /// Convierte un búfer RGBA de PDFium (4 bytes por píxel) a grises (luma BT.601).
+    ///
+    /// `pdfium-render` activa `FPDF_REVERSE_BYTE_ORDER` por defecto: el orden es RGBA.
+    pub fn from_rgba(raw: &[u8], width: u32, height: u32) -> Self {
         let px = raw
             .chunks_exact(4)
             .map(|c| {
-                let (b, g, r) = (c[0] as u32, c[1] as u32, c[2] as u32);
+                let (r, g, b) = (c[0] as u32, c[1] as u32, c[2] as u32);
                 ((299 * r + 587 * g + 114 * b + 500) / 1000) as u8
             })
             .collect();
