@@ -1,0 +1,42 @@
+# Spike S1 (visor Slint): compila el prototipo para Windows y lo publica como
+# artefacto descargable (demi-s1.exe + pdfium.dll + instrucciones de prueba).
+name: Spike S1 · visor Slint
+
+on:
+  pull_request:
+    paths:
+      - "spikes/s1-visor-slint/**"
+      - ".github/workflows/spike-s1.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  windows:
+    name: Compilar para Windows x64
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: spikes/s1-visor-slint
+      - name: PDFium fijado
+        run: cargo xtask pdfium fetch
+      - name: Compilar (release)
+        working-directory: spikes/s1-visor-slint
+        run: cargo build --release --locked
+      - name: Preparar paquete
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force dist | Out-Null
+          Copy-Item spikes/s1-visor-slint/target/release/demi-s1.exe dist/
+          Copy-Item vendor/pdfium/win-x64/bin/pdfium.dll dist/
+          Copy-Item vendor/pdfium/win-x64/LICENSE dist/PDFIUM-LICENSE.txt
+          Copy-Item spikes/s1-visor-slint/PRUEBA.md dist/
+      - uses: actions/upload-artifact@v7
+        with:
+          name: demi-s1-windows-x64
+          path: dist/
+          retention-days: 14
