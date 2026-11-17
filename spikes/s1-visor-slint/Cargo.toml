@@ -1,0 +1,22 @@
+[package]
+name = "demi-spike-s1"
+description = "Spike S1 de Demi: visor de PDF en Slint (rendimiento y accesibilidad). Código desechable."
+version = "0.0.1"
+edition = "2024"
+rust-version = "1.85"
+license = "GPL-3.0-only"
+publish = false
+
+[[bin]]
+name = "demi-s1"
+path = "src/main.rs"
+
+[dependencies]
+demi-engine = { path = "../../crates/demi-engine" }
+slint = "1.19"
+
+[build-dependencies]
+slint-build = "1.19"
+
+# Workspace propio: los spikes no forman parte del workspace principal.
+[workspace]

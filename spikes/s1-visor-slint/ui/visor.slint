@@ -1,0 +1,198 @@
+// Spike S1 · Visor de PDF en Slint (design.md §6.2, tasks.md S1).
+// Virtualización propia: Rust solo entrega las páginas visibles (± margen) con su
+// posición; el Flickable conoce la altura total del documento. Zoom con Ctrl+rueda
+// o Ctrl +/-/0, capa vectorial de anotaciones arrastrables y nodos accesibles con
+// el texto de cada página.
+
+import { Button } from "std-widgets.slint";
+
+export struct Annot {
+    x: float,  // en puntos PDF, desde la esquina superior izquierda
+    y: float,
+    w: float,
+    h: float,
+}
+
+export struct PageData {
+    index: int,
+    y: length,          // posición vertical en el documento, al zoom actual
+    image: image,
+    width-pt: float,
+    height-pt: float,
+    text: string,
+    annots: [Annot],
+}
+
+component AnnotRect inherits Rectangle {
+    in property <Annot> a;
+    in property <float> zoom;
+    in-out property <length> dx: 0px;
+    in-out property <length> dy: 0px;
+    x: a.x * zoom * 1px + dx;
+    y: a.y * zoom * 1px + dy;
+    width: a.w * zoom * 1px;
+    height: a.h * zoom * 1px;
+    background: #F3E3A1A0;
+    border-color: #2B5E62;
+    border-width: ta.pressed ? 2px : 1px;
+    accessible-role: button;
+    accessible-label: "Anotación (arrastrable)";
+
+    ta := TouchArea {
+        mouse-cursor: move;
+        moved => {
+            root.dx += self.mouse-x - self.pressed-x;
+            root.dy += self.mouse-y - self.pressed-y;
+        }
+    }
+}
+
+export component AppWindow inherits Window {
+    title: "Demi · Spike S1 (visor Slint)";
+    preferred-width: 1100px;
+    preferred-height: 800px;
+    background: #EEF4F0;
+
+    in property <[PageData]> pages;        // solo las páginas visibles (± margen)
+    in property <length> total-height;     // altura del documento al zoom actual
+    in property <length> max-page-width;   // ancho de la página más ancha al zoom actual
+    in property <string> doc-name;
+    in property <string> stats;
+    in-out property <float> zoom: 1.0;
+    in-out property <length> scroll-y <=> fl.content-y;
+    out property <length> visible-height: fl.height;
+
+    callback viewport-changed();
+    callback zoom-requested(float);
+
+    // El Flickable filtra la rueda ~800 ms tras desplazarse; con Ctrl pulsado se
+    // desactiva para que la rueda llegue a las páginas (zoom).
+    property <bool> ctrl-down: false;
+
+    init => { keys.focus(); }
+
+    keys := FocusScope {
+        capture-key-pressed(e) => {
+            if (e.text == Key.Control) { root.ctrl-down = true; }
+            if (e.modifiers.control && (e.text == "+" || e.text == "=")) {
+                root.zoom-requested(root.zoom * 1.25);
+                return accept;
+            }
+            if (e.modifiers.control && e.text == "-") {
+                root.zoom-requested(root.zoom / 1.25);
+                return accept;
+            }
+            if (e.modifiers.control && e.text == "0") {
+                root.zoom-requested(1.0);
+                return accept;
+            }
+            return reject;
+        }
+        capture-key-released(e) => {
+            if (e.text == Key.Control) { root.ctrl-down = false; }
+            return reject;
+        }
+
+        VerticalLayout {
+            Rectangle {
+                background: #E1E4DB;
+                height: 52px;
+                HorizontalLayout {
+                    padding: 8px;
+                    spacing: 8px;
+                    alignment: start;
+                    Text {
+                        text: "Demi";
+                        font-italic: true;
+                        font-size: 22px;
+                        color: #204243;
+                        vertical-alignment: center;
+                        accessible-role: none;
+                    }
+                    Text {
+                        text: root.doc-name;
+                        color: #204243;
+                        vertical-alignment: center;
+                    }
+                    Button {
+                        text: "Alejar";
+                        clicked => { root.zoom-requested(root.zoom / 1.25); }
+                    }
+                    Text {
+                        text: Math.round(root.zoom * 100) + " %";
+                        color: #204243;
+                        vertical-alignment: center;
+                        accessible-label: "Zoom " + Math.round(root.zoom * 100) + " por ciento";
+                    }
+                    Button {
+                        text: "Acercar";
+                        clicked => { root.zoom-requested(root.zoom * 1.25); }
+                    }
+                    Button {
+                        text: "100 %";
+                        accessible-label: "Tamaño real";
+                        clicked => { root.zoom-requested(1.0); }
+                    }
+                    Text {
+                        text: root.stats;
+                        color: #2B5E62;
+                        vertical-alignment: center;
+                    }
+                }
+            }
+
+            fl := Flickable {
+                interactive: !root.ctrl-down;
+                // En escritorio, arrastrar con el ratón no desplaza (eso será la herramienta Mano).
+                mouse-drag-pan-enabled: false;
+                content-height: root.total-height;
+                content-width: max(self.width, root.max-page-width + 32px);
+                changed content-y => { root.viewport-changed(); }
+                changed height => { root.viewport-changed(); }
+
+                for page in root.pages: Rectangle {
+                    y: page.y;
+                    x: 0;
+                    width: fl.content-width;
+                    height: page.height-pt * root.zoom * 1px + 16px;
+                    accessible-role: text;
+                    accessible-label: "Página " + (page.index + 1) + ". " + page.text;
+
+                    Rectangle {
+                        x: max(16px, (parent.width - self.width) / 2);
+                        y: 8px;
+                        width: page.width-pt * root.zoom * 1px;
+                        height: page.height-pt * root.zoom * 1px;
+                        background: white;
+                        border-color: #BEC0BB;
+                        border-width: 1px;
+
+                        Image {
+                            width: parent.width;
+                            height: parent.height;
+                            source: page.image;
+                            image-fit: fill;
+                            accessible-role: none;
+                        }
+
+                        // Ctrl + rueda = zoom; sin Ctrl, el evento sigue hacia el Flickable.
+                        TouchArea {
+                            scroll-event(e) => {
+                                if (e.modifiers.control) {
+                                    root.zoom-requested(e.delta-y > 0 ? root.zoom * 1.1 : root.zoom / 1.1);
+                                    return accept;
+                                }
+                                return reject;
+                            }
+                        }
+
+                        for a in page.annots: AnnotRect {
+                            a: a;
+                            zoom: root.zoom;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

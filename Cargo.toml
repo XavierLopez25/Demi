@@ -1,4 +1,6 @@
 [workspace]
+# Los spikes (F1) son código desechable con su propio workspace.
+exclude = ["spikes"]
 resolver = "3"
 members = [
     "crates/demi-core",

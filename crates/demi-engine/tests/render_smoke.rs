@@ -65,18 +65,18 @@ fn renders_first_page_with_pinned_pdfium() {
     assert_eq!(bitmap.width(), 200);
     assert_eq!(bitmap.height(), 200);
 
-    // 4 bytes por píxel (BGRA/BGRx). Centro = negro, esquina = blanco.
+    // 4 bytes por píxel (RGBA, ver FPDF_REVERSE_BYTE_ORDER). Centro = negro, esquina = blanco.
     let raw = bitmap.as_raw_bytes();
     let px = |x: usize, y: usize| {
         let i = (y * 200 + x) * 4;
         (raw[i], raw[i + 1], raw[i + 2])
     };
-    let (b, g, r) = px(100, 100);
+    let (r, g, b) = px(100, 100);
     assert!(
         r < 32 && g < 32 && b < 32,
         "el centro debería ser negro: {r},{g},{b}"
     );
-    let (b, g, r) = px(5, 5);
+    let (r, g, b) = px(5, 5);
     assert!(
         r > 223 && g > 223 && b > 223,
         "la esquina debería ser blanca: {r},{g},{b}"

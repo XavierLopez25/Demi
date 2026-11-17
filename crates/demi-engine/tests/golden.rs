@@ -69,7 +69,7 @@ fn render_first_page(pdfium: &Pdfium, path: &PathBuf) -> Result<Option<Gray>, St
     let bitmap = page
         .render_with_config(&PdfRenderConfig::new().set_target_width(WIDTH as i32))
         .map_err(|e| format!("{e:?}"))?;
-    Ok(Some(Gray::from_bgra(
+    Ok(Some(Gray::from_rgba(
         &bitmap.as_raw_bytes(),
         bitmap.width() as u32,
         bitmap.height() as u32,

@@ -8,6 +8,12 @@ all-features = true
 [advisories]
 version = 2
 yanked = "deny"
+ignore = [
+    # chrono sin mantenimiento (aviso, no vulnerabilidad). Llega solo como dependencia
+    # obligatoria de pdfium-render, que lo usa para fechas de metadatos; Demi no lo usa
+    # directamente. Revisar cuando pdfium-render lo sustituya (jiff/time).
+    { id = "RUSTSEC-2026-0543", reason = "transitiva vía pdfium-render; sin alternativa segura todavía" },
+]
 
 [licenses]
 version = 2
