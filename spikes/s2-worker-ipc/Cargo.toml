@@ -1,0 +1,26 @@
+[package]
+name = "demi-spike-s2"
+description = "Spike S2 de Demi: proceso aislado (worker) + IPC con memoria compartida. Código desechable."
+version = "0.0.1"
+edition = "2024"
+rust-version = "1.85"
+license = "MIT OR Apache-2.0"
+publish = false
+
+[dependencies]
+demi-engine = { path = "../../crates/demi-engine" }
+interprocess = "2.4"
+memmap2 = "0.9"
+postcard = { version = "1.1", features = ["use-std"] }
+serde = { version = "1.0", features = ["derive"] }
+
+[[bin]]
+name = "s2-bench"
+path = "src/bin/bench.rs"
+
+[[bin]]
+name = "s2-worker"
+path = "src/bin/worker.rs"
+
+# Workspace propio: los spikes no forman parte del workspace principal.
+[workspace]
