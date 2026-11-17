@@ -1,6 +1,6 @@
 # Spike S2 · Worker aislado + IPC con memoria compartida — informe
 
-> **Tarea:** `tasks.md` S2 · **Decisiones afectadas:** ADR-05 (worker aislado), `design.md` §5 · **Estado:** en curso — falta la medición en Windows y macOS (CI)
+> **Tarea:** `tasks.md` S2 · **Decisiones afectadas:** ADR-05 (worker aislado), `design.md` §5 · **Estado:** cerrado (2026-11-17) — **se confirma ADR-05 (worker aislado)**
 > **Código:** `spikes/s2-worker-ipc/` (desechable) · **Medición multiplataforma:** workflow `Spike S2 · worker + IPC`
 
 ## Pregunta
@@ -16,29 +16,36 @@
 - **Handshake con token** de un solo uso: el worker solo es aceptado si devuelve el token recibido al lanzarlo.
 - `s2-bench`: hace de app; mide arranque, sobrecoste de IPC por tesela (secuencial y con 8 peticiones en vuelo), verifica cada tesela con una suma de comprobación del lado de la app y simula fallos (kill desde fuera, `abort()` dentro del worker).
 
-## Resultados en Linux x64 (contenedor de desarrollo, release)
+## Resultados (workflow `Spike S2 · worker + IPC`, runners de GitHub, release)
 
-| Medida | p50 | p95 | máx | Objetivo |
+Valores p50 (p95 entre paréntesis).
+
+| Medida | Linux x64 | Windows x64 | macOS arm64 | macOS Intel | Objetivo |
+|---|---|---|---|---|---|
+| Arranque hasta conectar | 0,8 ms (1,0) | 5,1 ms (9,5) | 7,3 ms (10,9) | 10,3 ms (20,2) | |
+| **Arranque hasta listo** (PDFium + PDF abierto) | 1,3 ms (1,6) | 11,5 ms (16,8) | 12,9 ms (47,2) | 16,0 ms (39,5) | < 150 ms ✅ |
+| **Sobrecoste IPC por tesela** | 0,04 ms (0,07) | 0,05 ms (0,26) | 0,11 ms (0,25) | 0,15 ms (0,46) | < 16 ms ✅ |
+| Render de página A4 a 1024 px | 5,3 ms | 4,3 ms | 2,0 ms | 5,0 ms | |
+| Primer render de la sesión (máx.) | 1 340 ms | 44 ms | 489 ms | 789 ms | ver hallazgo 2 |
+| Teselas/s con 8 peticiones en vuelo | 542 | 444 | 390 | 425 | |
+
+Fallos simulados (en todas las plataformas **la app sigue viva** ✅):
+
+| Fallo | Linux x64 | Windows x64 | macOS arm64 | macOS Intel |
 |---|---|---|---|---|
-| Arranque hasta conectar | 1,69 ms | 2,33 ms | 2,33 ms | |
-| Arranque hasta listo (PDFium + PDF abierto) | 2,32 ms | 3,21 ms | 3,21 ms | < 150 ms ✅ |
-| **Sobrecoste IPC por tesela** (ida y vuelta − render − copia) | **0,17 ms** | 0,27 ms | 3,50 ms | < 16 ms ✅ |
-| Tesela completa (incl. render de página cuando toca) | 1,79 ms | 6,04 ms | 16,18 ms | |
-| Render de página A4 a 1024 px (en el worker) | 3,78 ms | 7,22 ms | 14,12 ms | |
+| kill del proceso: detección / reinicio + primera tesela | 0,6 / 10 ms | 1,1 / 20 ms | 1,1 / 62 ms | 1,6 / 85 ms |
+| `abort()` en el worker: detección / reinicio + primera tesela | 346 / 12 ms | 249 / 20 ms | 0,3 / 65 ms | 5,9 / 75 ms |
 
-Con 8 peticiones en vuelo: **486 teselas/s**.
+Medición previa en el contenedor de desarrollo (Linux): arranque 2,3 ms, sobrecoste 0,17 ms, 486 teselas/s.
 
-| Fallo simulado | Detección | Reinicio hasta listo (incl. primera tesela) | La app sigue viva |
-|---|---|---|---|
-| kill del proceso | 0,6 ms | 14,3 ms | ✅ |
-| `abort()` dentro del worker | 0,6 ms | 14,7 ms | ✅ |
+## Decisión
 
-## Resultados en Windows y macOS
-
-⏳ Se completan con el resumen del workflow `Spike S2 · worker + IPC` (ver el PR).
+**Se confirma ADR-05:** el worker aislado cumple con mucho margen en las cuatro plataformas (arranque ≤ 47 ms en p95 frente a 150; sobrecoste de IPC ≤ 0,5 ms frente a 16) y la app sobrevive a la muerte del worker. No hace falta el plan B (píxeles comprimidos por el socket ni *pool* precalentado por rendimiento).
 
 ## Hallazgos
 
-1. El coste de IPC (≈ 0,2 ms) es despreciable frente al render (≈ 4 ms por página A4): **el worker aislado no penaliza la fluidez**.
-2. La muerte del worker se detecta al instante por el cierre del socket (sin necesidad de *heartbeat* para ese caso); el *heartbeat* de `design.md` §5.3 sigue haciendo falta para el caso de un worker **colgado**.
-3. Pasar los píxeles por memoria compartida evita copiar 1 MiB por tesela a través del socket.
+1. El coste de IPC (≤ 0,2 ms) es despreciable frente al render (2–5 ms por página A4): **el worker aislado no penaliza la fluidez**.
+2. **El primer render de cada worker es lento** (hasta 1,3 s): PDFium carga fuentes del sistema la primera vez. → En T2.4 el worker hará un render de calentamiento al arrancar, antes de anunciarse como listo, y la app lanzará el worker al abrir la ventana, no al abrir el primer documento.
+3. **Tras un `abort()`, Linux y Windows tardan ~250–350 ms en cerrar el proceso** porque intervienen sus gestores de fallos (core dumps / Windows Error Reporting). → En T2.4 el worker desactivará el volcado de memoria (`RLIMIT_CORE = 0`) y el cuadro de error de Windows (`SetErrorMode`/`WerSetFlags`): además de acelerar la detección, evita que la usuaria vea un diálogo de "el programa dejó de funcionar" y que queden volcados con contenido de sus documentos en disco.
+4. La muerte del worker se detecta por el cierre del socket, sin *heartbeat*; el *heartbeat* de `design.md` §5.3 sigue haciendo falta para un worker **colgado**.
+5. Pasar los píxeles por memoria compartida evita copiar 1 MiB por tesela por el socket. En producción conviene memoria compartida anónima/nombrada en lugar de un archivo temporal (en Windows el archivo puede tocar disco).

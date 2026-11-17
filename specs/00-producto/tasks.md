@@ -96,7 +96,7 @@ Cada spike produce código desechable en `spikes/<nombre>/` y un informe corto e
   - **Éxito:** 60 fps al desplazarse en el equipo de referencia; NVDA y VoiceOver anuncian los botones y leen el texto de una página.
   - **Plan B:** widget de render propio con wgpu dentro de Slint; si tampoco funciona, reevaluar ADR-02.
 
-- [ ] **S2 IPC con memoria compartida** · M · depende de T0.3
+- [x] **S2 IPC con memoria compartida** · M · depende de T0.3
   - Proceso worker mínimo que renderiza teselas y las entrega por un anillo de memoria compartida, con control por socket local (`interprocess` + `postcard`).
   - **Éxito:** de tesela renderizada a disponible en la app en < 16 ms; arranque del worker < 150 ms; matar el worker no afecta a la app.
   - **Plan B:** píxeles por el socket comprimidos con LZ4; pool de workers precalentados.
