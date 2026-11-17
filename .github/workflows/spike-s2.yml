@@ -1,0 +1,40 @@
+# Spike S2 (worker + IPC): ejecuta la medición en las cuatro plataformas y publica
+# los resultados en el resumen del job (pestaña Summary del workflow).
+name: Spike S2 · worker + IPC
+
+on:
+  pull_request:
+    paths:
+      - "spikes/s2-worker-ipc/**"
+      - ".github/workflows/spike-s2.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  bench:
+    name: Medir (${{ matrix.name }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { name: Linux x64, os: ubuntu-latest }
+          - { name: Windows x64, os: windows-latest }
+          - { name: macOS arm64, os: macos-latest }
+          - { name: macOS Intel, os: macos-15-intel }
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: spikes/s2-worker-ipc
+      - name: PDFium fijado
+        run: cargo xtask pdfium fetch
+      - name: Compilar (release)
+        working-directory: spikes/s2-worker-ipc
+        run: cargo build --release --locked
+      - name: Medir
+        working-directory: spikes/s2-worker-ipc
+        run: cargo run --release --locked --bin s2-bench
