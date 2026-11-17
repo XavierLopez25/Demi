@@ -90,7 +90,7 @@ flowchart LR
 
 Cada spike produce código desechable en `spikes/<nombre>/` y un informe corto en `specs/00-producto/spikes/<nombre>.md`: resultado, mediciones y decisión. **El resultado puede modificar `design.md`; si lo hace, se actualiza antes de F2.**
 
-- [ ] **S1 Visor en Slint** · L · depende de T0.3
+- [x] **S1 Visor en Slint** · L · depende de T0.3
   - Ventana Slint que muestra un PDF de 500 páginas con teselas desde PDFium (en proceso, sin worker todavía), zoom con Ctrl+rueda, desplazamiento continuo y una capa vectorial con 50 rectángulos de "anotación" arrastrables.
   - Árbol de AccessKit: botones con nombre y un nodo de texto por página.
   - **Éxito:** 60 fps al desplazarse en el equipo de referencia; NVDA y VoiceOver anuncian los botones y leen el texto de una página.

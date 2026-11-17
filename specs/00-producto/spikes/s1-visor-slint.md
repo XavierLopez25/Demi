@@ -1,6 +1,6 @@
 # Spike S1 · Visor en Slint — informe
 
-> **Tarea:** `tasks.md` S1 · **Decisión afectada:** ADR-02 (Slint) · **Estado:** parcial — falta la medición en Windows con NVDA
+> **Tarea:** `tasks.md` S1 · **Decisión afectada:** ADR-02 (Slint) · **Estado:** cerrado (2026-11-17) — **se mantiene Slint**
 > **Código:** `spikes/s1-visor-slint/` (desechable) · **Artefacto Windows:** workflow `Spike S1 · visor Slint`
 
 ## Pregunta
@@ -40,7 +40,31 @@
 4. **`pdfium-render` entrega RGBA, no BGRA**, porque activa `FPDF_REVERSE_BYTE_ORDER` por defecto. Se corrige el arnés de regresión visual (`Gray::from_rgba`) y se regeneran sus referencias.
 5. La propiedad `viewport-*` del `Flickable` está obsoleta en Slint 1.19: usar `content-*`.
 
-## Pendiente para cerrar S1
+## Resultados en Windows (equipo del autor, 2026-11-17)
 
-- [ ] Prueba en Windows (equipo del autor) con la checklist `spikes/s1-visor-slint/PRUEBA.md`: fps, peor frame, memoria, NVDA.
-- [ ] Decisión: mantener ADR-02 (Slint) o activar el plan B (widget de render propio con wgpu dentro de Slint).
+Ejecutable del workflow `Spike S1 · visor Slint` (renderizador por defecto de Slint), checklist `PRUEBA.md`.
+
+| Prueba | Objetivo | Resultado |
+|--------|----------|-----------|
+| fps al desplazarse rápido con la rueda | 60 fps | ✅ **189 fps** |
+| Peor frame | < 33 ms | ✅ **11 ms** |
+| Páginas en blanco antes de dibujarse | mínimo | ✅ no se perciben |
+| Memoria tras recorrer las 500 páginas | acotada | ✅ **92 MB** |
+| Zoom (Ctrl + rueda, Ctrl +/-/0, botones) y nitidez tras el zoom | funciona | ✅ |
+| Arrastrar anotaciones, también tras el zoom | fluido | ✅ |
+| NVDA: botones, texto de cada página, anotaciones | se anuncian | ✅ (ver seguimiento 3) |
+| PDF real del autor (tesis) | se abre y navega bien | ✅ |
+| Barra de desplazamiento | se puede arrastrar | ⚠️ el prototipo no la tiene (seguimiento 1) |
+| VoiceOver (macOS) | se anuncian | ⏳ sin Mac disponible; se verificará en T3.4 |
+
+## Decisión
+
+**Se mantiene ADR-02 (Slint).** El criterio de éxito se cumple con amplio margen en el equipo del autor (189 fps frente a 60; peor frame de 11 ms frente a 33), con memoria acotada y un árbol de accesibilidad que NVDA recorre. No se activa el plan B (render propio con wgpu).
+
+## Seguimiento para el visor de producción (T3.1, T3.4)
+
+1. **Barra de desplazamiento** propia, accesible con teclado y lector de pantalla (el `Flickable` no trae una).
+2. **Botones con los componentes propios de Demi** (T3.1): los de estilo por defecto de Slint parecen deshabilitados y tienen poco contraste.
+3. **El nombre accesible debe contener el texto visible** (WCAG 2.5.3, *label in name*): el botón "100 %" se anunciaba como "Tamaño real". Regla general para todos los controles: p. ej. "100 % (tamaño real)".
+4. Mantener la virtualización controlada desde Rust, el `FocusScope` raíz para Ctrl + rueda y `mouse-drag-pan-enabled: false` (hallazgos 1–3).
+5. Medir de nuevo con PDFs escaneados e imágenes grandes cuando el render pase por el worker (S2) y con teselas (T3.4).
