@@ -180,7 +180,7 @@ pub struct DocumentSession {
 
 **Fuente de verdad:** `lopdf` mantiene el documento editable. PDFium se usa para leer, renderizar y generar contenido (apariencias, texto), y sus resultados se vuelcan al modelo `lopdf`. Tras cada acción, el motor se resincroniza: recarga incremental de objetos o recarga completa en memoria.
 
-**[Spike S3]** Hay que medir el coste de la recarga completa en documentos grandes. Si es alto, se pasa a "PDFium como fuente de verdad + `lopdf` solo al guardar" para las acciones que PDFium cubra.
+**[Spike S3 · confirmado]** Recarga completa en memoria tras cada acción: entre 4,5 y 31 ms hasta la página visible en un PDF de 1 000 páginas según la plataforma (objetivo 200 ms). Las ediciones se acumulan como secciones incrementales cuando es posible (~0,5 ms y unos cientos de bytes por acción, frente a 19–111 ms del guardado completo con PDFium). Detalle en `spikes/s3-fuente-verdad.md`.
 
 ---
 

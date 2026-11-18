@@ -101,7 +101,7 @@ Cada spike produce código desechable en `spikes/<nombre>/` y un informe corto e
   - **Éxito:** de tesela renderizada a disponible en la app en < 16 ms; arranque del worker < 150 ms; matar el worker no afecta a la app.
   - **Plan B:** píxeles por el socket comprimidos con LZ4; pool de workers precalentados.
 
-- [ ] **S3 Fuente de verdad del documento** · M · depende de T0.3
+- [x] **S3 Fuente de verdad del documento** · M · depende de T0.3
   - Aplicar `pages.rotate`, `annot.create` y `pages.delete` sobre un modelo `lopdf` y resincronizar PDFium (recarga incremental o completa) en PDFs de 10, 100 y 1 000 páginas.
   - **Éxito:** < 200 ms desde la acción hasta la página visible actualizada en el de 1 000 páginas.
   - **Plan B:** PDFium como fuente de verdad y `lopdf` solo al guardar.

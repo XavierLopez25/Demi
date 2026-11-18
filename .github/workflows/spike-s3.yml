@@ -1,0 +1,47 @@
+# Spike S3 (fuente de verdad): mide lopdf vs PDFium como modelo editable en las
+# cuatro plataformas y publica los resultados en el resumen del job.
+name: Spike S3 · fuente de verdad
+
+on:
+  pull_request:
+    paths:
+      - "spikes/s3-fuente-verdad/**"
+      - ".github/workflows/spike-s3.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  bench:
+    name: Medir (${{ matrix.name }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { name: Linux x64, os: ubuntu-latest }
+          - { name: Windows x64, os: windows-latest }
+          - { name: macOS arm64, os: macos-latest }
+          - { name: macOS Intel, os: macos-15-intel }
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: spikes/s3-fuente-verdad
+      - name: PDFium fijado
+        run: cargo xtask pdfium fetch
+      - name: Caché del corpus de pruebas
+        uses: actions/cache@v6
+        with:
+          path: corpus/pdfjs
+          key: corpus-${{ hashFiles('corpus/manifest.toml') }}
+      - name: Corpus de pruebas (smoke)
+        run: cargo xtask corpus fetch --set smoke
+      - name: Compilar (release)
+        working-directory: spikes/s3-fuente-verdad
+        run: cargo build --release --locked
+      - name: Medir
+        working-directory: spikes/s3-fuente-verdad
+        run: cargo run --release --locked --bin s3-bench

@@ -15,6 +15,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/); v
 - T0.5: regresión visual: la primera página de cada documento del corpus `smoke` se compara por SSIM con referencias PNG versionadas (`crates/demi-engine/tests/golden/`), umbrales por documento en `golden.toml`, `cargo xtask golden update` para regenerarlas y artefacto con las diferencias en CI.
 - S1 (spike): visor en Slint con virtualización propia, zoom con Ctrl + rueda, capa de anotaciones arrastrables y nodos accesibles por página (`spikes/s1-visor-slint/`); workflow que publica un ejecutable de Windows para probarlo; informe en `specs/00-producto/spikes/s1-visor-slint.md`.
 - S2 (spike): proceso aislado (`s2-worker`) con socket local + anillo de teselas en memoria compartida y medición en las 4 plataformas por CI (`spikes/s2-worker-ipc/`, informe en `specs/00-producto/spikes/s2-worker-ipc.md`).
+- S3 (spike): comparación de `lopdf` frente a PDFium como fuente de verdad del documento (girar, anotar y eliminar en PDFs de 10, 100 y 1 000 páginas, con guardado incremental) y medición en las 4 plataformas por CI (`spikes/s3-fuente-verdad/`, informe en `specs/00-producto/spikes/s3-fuente-verdad.md`).
 
 ### Corregido
 - Tests de render: los bitmaps de `pdfium-render` vienen en RGBA (no BGRA); referencias visuales regeneradas.
